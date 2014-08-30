@@ -1,5 +1,5 @@
 {
-  "name": "remote-exec-js",
+  "name": "kirov",
   "version": "0.0.0",
   "description": "```javascript var remoteExec = require('remote-exec'),     r = new remoteExec();",
   "main": "index.js",
