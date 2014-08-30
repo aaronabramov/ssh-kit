@@ -1,14 +1,14 @@
 {
-  "name": "kirov",
+  "name": "ssh-kit",
   "version": "0.0.0",
-  "description": "```javascript var remoteExec = require('remote-exec'),     r = new remoteExec();",
+  "description": "javascript SSH kit",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "chalk": "^0.5.1"
+    "chalk": "0.5.1"
   }
 }
