@@ -1,3 +1,6 @@
+# ssh-kit
+minimalist, efficient ssh client for javascript
+
 ```javascript
 var RemoteExec = require('./'),
     r = new RemoteExec();
