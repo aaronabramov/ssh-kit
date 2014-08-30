@@ -1,8 +1,11 @@
 ```javascript
-var remoteExec = require('remote-exec'),
-    r = new remoteExec();
+var RemoteExec = require('./'),
+    r = new RemoteExec();
 
-r.server('user@localhost');
+r.username('dmitriiabramov');
+r.host('rheia.us');
+r.exec('pwd');
+r.sshKey('~/.ssh/id_rsa');
 
-r.exec('cd ~ && git clone git@github.com:dmitriiabramov/sharkhorse.git');
+r.done();
 ```
