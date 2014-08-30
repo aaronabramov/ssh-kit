@@ -4,8 +4,10 @@ var RemoteExec = require('./'),
 
 r.username('dmitriiabramov');
 r.host('rheia.us');
-r.exec('pwd');
 r.sshKey('~/.ssh/id_rsa');
 
-r.done();
+r.exec('pwd');
+r.exec('ls -la');
+r.exec('ls');
+r.on('finish', console.log.bind(console, 'all done!'));
 ```

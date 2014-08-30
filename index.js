@@ -1,54 +1,76 @@
 var exec = require('child_process').exec,
     spawn = require('child_process').spawn,
     chalk = require('chalk'),
-    path = require('path');
+    path = require('path'),
+    EventEmitter = require('events').EventEmitter,
+    util = require('util'),
+    ATTRIBUTES = 'username host sshKey'.split(/\s+/),
+    DEBUG = true;
+
+
+function debug() {
+    if (DEBUG) {
+        console.log.apply(console, [chalk.underline.green('DEBUG:') + ' '].concat(Array.prototype.slice.call(arguments)));
+    }
+};
 
 function RemoteExec() {
     this.queue = [];
     this.ctx = {};
 };
 
-RemoteExec.prototype.username = function(username) {
-    this.ctx.username = username;
-};
+util.inherits(RemoteExec, EventEmitter);
 
-RemoteExec.prototype.host = function(host) {
-    this.ctx.host = host;
-};
+// define setters
+ATTRIBUTES.forEach(function(attribute) {
+    RemoteExec.prototype[attribute] = function(val) {
+        return this.ctx[attribute] = val;
+    };
+});
 
 RemoteExec.prototype.remote = function() {
     return this.ctx.username + '@' + this.ctx.host;
 };
 
-RemoteExec.prototype.sshKey = function(filepath) {
-    this.ctx.sshKey = filepath;
-};
-
-
-RemoteExec.prototype.exec = function(cmd) {
+RemoteExec.prototype.exec = function(cmd, callback) {
     this.queue.push(new Task({
-        type: 'ssh',
         cmd: cmd,
-        ctx: this.ctx
+        ctx: this.ctx,
+        callback: callback
     }));
+    this.start();
 };
 
-RemoteExec.prototype.done = function(callback) {
+RemoteExec.prototype.start = function() {
+    if (!this.isRunning) {
+        this.emit('start');
+        debug('start');
+        this.isRunning = true;
+        this.callNext();
+    }
+};
+
+RemoteExec.prototype.stop = function() {
+    debug('stop');
+    this.isRunning = false;
+    this.emit('finish');
+};
+
+RemoteExec.prototype.callNext = function() {
     var _this = this;
 
-    function callNext() {
+    setTimeout(function() {
         var task = _this.queue.shift();
         if (!task) {
-            return callback();
+            return _this.stop();
         }
         task.run(function(err) {
             if (err) {
                 throw err;
             }
-            callNext();
+            _this.callNext();
         });
-    }
-    callNext();
+    }, 5);
 };
 
 
@@ -63,12 +85,16 @@ Task.prototype.run = function(done) {
     args = [
         this.ctx.username + '@' + this.ctx.host,
         '-q',
-        '"' + this.cmd + '"'
+        this.cmd
     ];
+    console.log(cmd, args);
     console.log(chalk.underline.cyan('executing:'), this.cmd);
     var child = spawn(cmd, args);
     child.stdout.pipe(process.stdout);
     child.stderr.pipe(process.stderr);
+    child.on('close', function(code) {
+        done();
+    });
 };
 
 module.exports = RemoteExec;
