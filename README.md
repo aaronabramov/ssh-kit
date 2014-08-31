@@ -19,9 +19,19 @@ ssh.on('finish', console.log.bind(console, 'all done!'));
 ```javascript
 // TODO:
 
+// multiple servers in parallel
+ssh.addServer('s1');
+ssh.addServer('s2');
+
+// ssh options
 ssh.set('forward-agent', true);
 
+// additional parameters
 ssh.with({dir: '~/test', env: {ENV: 'test'}, servers: ['s1', 's2'], function() {
     ssh.exec('forever start ./run.js');
 });
+
+// utils
+
+ssh.mkdirIfNotExists('~/test1'); // etc...
 ```
