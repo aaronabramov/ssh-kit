@@ -4,8 +4,8 @@ var SSH = require('../'),
 before(function(done) {
     var dir = __dirname,
         cmd = [
-            // 'cp ' + dir + '/ssh_kit_test_key ~/.ssh',
-            // 'chmod 600 ~/.ssh/ssh_kit_test_key',
+            'cp ' + dir + '/ssh_kit_test_key ~/.ssh',
+            'chmod 600 ~/.ssh/ssh_kit_test_key',
             'cat ' + dir + '/ssh_kit_test_key.pub >> ~/.ssh/authorized_keys',
             'chmod 600 ~/.ssh/authorized_keys && ls -la ~/.ssh'
         ].join(' && ');
@@ -29,7 +29,7 @@ describe('ssh-kit', function() {
 
     it('connects to ssh', function(done) {
         this.ssh.set('host', 'localhost');
-        this.ssh.set('sshKey', __dirname + '/ssh_kit_test_key');
+        this.ssh.set('sshKey', '~/.ssh/ssh_kit_test_key');
         this.ssh.exec('ls');
         this.ssh.on('finish', done);
     });
