@@ -99,7 +99,6 @@ Task.prototype.run = function(done) {
         '-o',
         'StrictHostKeyChecking=no',
         '-q',
-        this.cmd
     ];
 
     if (key = this.ctx.get('sshKey')) {
