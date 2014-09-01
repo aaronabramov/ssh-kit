@@ -18,7 +18,8 @@ describe('ssh-kit', function() {
     it('connects to ssh', function(done) {
         var dir = __dirname;
 
-        run('mv ' + dir + '/ssh_kit_test_key ~/.ssh');
+        run('cp ' + dir + '/ssh_kit_test_key ~/.ssh');
+        run('chmod 600 ~/.ssh/ssh_kit_test_key');
         run('cat ' + dir + '/ssh_kit_test_key.pub >> ~/.ssh/authorized_keys');
         run('chmod 600 ~/.ssh/authorized_keys');
         run('ls -la ~/.ssh');
