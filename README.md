@@ -1,4 +1,5 @@
 # ssh-kit
+[![Build Status](https://travis-ci.org/dmitriiabramov/ssh-kit.svg?branch=master)](https://travis-ci.org/dmitriiabramov/ssh-kit)
 minimalist, efficient ssh client for javascript
 
 ```javascript
