@@ -13,8 +13,8 @@ function run(cmd) {
 before(function(done) {
     var dir = __dirname,
         cmd = [
-            'cp ' + dir + '/ssh_kit_test_key /home/travis/.ssh/id_rsa',
-            'chmod 600 /home/travis/.ssh/id_rsa',
+            'cp ' + dir + '/ssh_kit_test_key /home/travis/.ssh',
+            'chmod 600 /home/travis/.ssh/ssh_kit_test_key',
             'cat ' + dir + '/ssh_kit_test_key.pub >> /home/travis/.ssh/authorized_keys',
             'chmod 600 /home/travis/.ssh/authorized_keys'
         ].join(' && ');
@@ -39,6 +39,7 @@ describe('ssh-kit', function() {
 
     it('connects to ssh', function(done) {
         this.ssh.set('host', 'localhost');
+        this.ssh.set('sshKey', '~/.ssh/ssh_kit_test_key');
         this.ssh.exec('ls');
         this.ssh.on('finish', done);
     });
