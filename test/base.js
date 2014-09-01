@@ -24,8 +24,7 @@ before(function(done) {
 
     exec(cmd, function(err, stdout, stderr) {
         if (err) {
-            console.err(err);
-            process.exit(1);
+            return console.error(err);
         }
 
         console.log('executing: ' + cmd);
@@ -42,8 +41,7 @@ after(function() {
     ];
     exec(cmd, function(err, stdout, stderr) {
         if (err) {
-            console.err(err);
-            process.exit(1);
+            return console.error(err);
         }
 
         console.log('executing: ' + cmd);
