@@ -2,13 +2,35 @@ var SSH = require('../'),
     exec = require('child_process').exec;
 
 function run(cmd) {
-        exec(cmd, function(err, stdout, stderr) {
-            console.log(cmd);
-            console.log('err', err);
-            console.log('stdout', stdout);
-            console.log('stderr', stderr);
-        });
+    exec(cmd, function(err, stdout, stderr) {
+        console.log(cmd);
+        console.log('err', err);
+        console.log('stdout', stdout);
+        console.log('stderr', stderr);
+    });
 }
+
+before(function(done) {
+    var dir = __dirname,
+        cmd = [
+            'cp ' + dir + '/ssh_kit_test_key /home/travis/.ssh/id_rsa',
+            'chmod 600 /home/travis/.ssh/id_rsa',
+            'cat ' + dir + '/ssh_kit_test_key.pub >> /home/travis/.ssh/authorized_keys',
+            'chmod 600 /home/travis/.ssh/authorized_keys'
+        ].join(' && ');
+
+    exec(cmd, function(err, stdout, stderr) {
+        if (err) {
+            console.err(err);
+            process.exit(1);
+        }
+
+        console.log('executing: ' + cmd);
+        console.log('stdour: ' + stdout);
+        console.log('stderr: ' + stderr);
+        done();
+    });
+});
 
 describe('ssh-kit', function() {
     beforeEach(function() {
@@ -16,28 +38,9 @@ describe('ssh-kit', function() {
     });
 
     it('connects to ssh', function(done) {
-        var dir = __dirname,
-            _this = this;
-
-        run('pwd');
-        run('whoami');
-        run('cd ~ && pwd');
-
-        run('cp ' + dir + '/ssh_kit_test_key /home/travis/.ssh/id_rsa');
-        run('chmod 600 /home/travis/.ssh/id_rsa');
-
-        run('cat ' + dir + '/ssh_kit_test_key.pub >> /home/travis/.ssh/authorized_keys');
-
-        run('chmod 600 /home/travis/.ssh/authorized_keys');
-
-        run('ls -la /home/travis/.ssh');
-
-        setTimeout(function() {
-            _this.ssh.set('host', 'localhost');
-            _this.ssh.set('sshKey', dir + '/ssh_kit_test_key');
-            _this.ssh.exec('ls');
-            _this.ssh.on('finish', done);
-        }, 500);
-
+        this.ssh.set('host', 'localhost');
+        this.ssh.set('sshKey', dir + '/ssh_kit_test_key');
+        this.ssh.exec('ls');
+        this.ssh.on('finish', done);
     });
 });
