@@ -98,7 +98,7 @@ Task.prototype.run = function(done) {
         'UserKnownHostsFile=/dev/null',
         '-o',
         'StrictHostKeyChecking=no',
-        '-q',
+        '-v',
         this.cmd
     ];
 
