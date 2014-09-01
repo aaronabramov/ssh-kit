@@ -39,7 +39,6 @@ describe('ssh-kit', function() {
 
     it('connects to ssh', function(done) {
         this.ssh.set('host', 'localhost');
-        this.ssh.set('sshKey', dir + '/ssh_kit_test_key');
         this.ssh.exec('ls');
         this.ssh.on('finish', done);
     });
