@@ -9,6 +9,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "chalk": "0.5.1"
+    "chalk": "0.5.1",
+    "immutable": "^2.0.16"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4"
   }
 }
