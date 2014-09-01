@@ -93,6 +93,10 @@ Task.prototype.run = function(done) {
     }
     args = [
         userAndHost,
+        '-o',
+        'UserKnownHostsFile=/dev/null',
+        '-o',
+        'StrictHostKeyChecking=no',
         '-q',
         this.cmd
     ];
