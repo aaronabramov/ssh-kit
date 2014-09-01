@@ -16,7 +16,8 @@ describe('ssh-kit', function() {
     });
 
     it('connects to ssh', function(done) {
-        var dir = __dirname;
+        var dir = __dirname,
+            _this = this;
 
         run('pwd');
         run('whoami');
@@ -32,10 +33,10 @@ describe('ssh-kit', function() {
         run('ls -la /home/travis/.ssh');
 
         setTimeout(function() {
-            this.ssh.set('host', 'localhost');
-            this.ssh.set('sshKey', dir + '/ssh_kit_test_key');
-            this.ssh.exec('ls');
-            this.ssh.on('finish', done);
+            _this.ssh.set('host', 'localhost');
+            _this.ssh.set('sshKey', dir + '/ssh_kit_test_key');
+            _this.ssh.exec('ls');
+            _this.ssh.on('finish', done);
         }, 500);
 
     });
