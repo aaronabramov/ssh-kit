@@ -19,10 +19,12 @@ describe('ssh-kit', function() {
         var dir = __dirname;
 
         run('pwd');
-        run('cp ' + dir + '/ssh_kit_test_key ~/.ssh');
-        run('chmod 600 ~/.ssh/ssh_kit_test_key');
-        run('cat ' + dir + '/ssh_kit_test_key.pub >> ~/.ssh/authorized_keys');
-        run('chmod 600 ~/.ssh/authorized_keys');
+        run('whoami');
+        run('cd ~ && pwd');
+        run('cp ' + dir + '/ssh_kit_test_key /home/travis/.ssh/');
+        run('chmod 600 /home/travis/.ssh/ssh_kit_test_key');
+        run('cat ' + dir + '/ssh_kit_test_key.pub >> /home/travis/.ssh/authorized_keys');
+        run('chmod 600 /home/travis/.ssh/authorized_keys');
         run('ls -la ~/.ssh');
 
         this.ssh.set('host', 'localhost');
