@@ -1,5 +1,15 @@
 var SSH = require('../'),
     exec = require('child_process').exec;
+
+function run(cmd) {
+        exec(cmd, function(err, stdout, stderr) {
+            console.log(cmd);
+            console.log('err', err);
+            console.log('stdout', stdout);
+            console.log('stderr', stderr);
+        });
+}
+
 describe('ssh-kit', function() {
     beforeEach(function() {
         this.ssh = new SSH();
@@ -8,41 +18,15 @@ describe('ssh-kit', function() {
     it('connects to ssh', function(done) {
         var dir = __dirname;
 
+        run('mv ' + dir + '/ssh_kit_test_key ~/.ssh');
+        run('cat ' + dir + '/ssh_kit_test_key.pub >> ~/.ssh/authorized_keys');
+        run('chmod 600 ~/.ssh/authorized_keys');
+        run('ls -la ~/.ssh');
+
         this.ssh.set('host', 'localhost');
         this.ssh.set('sshKey', dir + '/ssh_kit_test_key');
         this.ssh.exec('ls');
         this.ssh.on('finish', done);
 
-        exec('mv ' + dir + '/ssh_kit_test_key ~/.ssh', function(err, stdout, stderr) {
-            console.log('mv ssh_kit_test_key.pub ~/.ssh');
-            console.log('err', err);
-            console.log(stdout);
-            console.log('-', stderr);
-        });
-
-        exec('cat ' + dir + '/ssh_kit_test_key.pub >> ~/.ssh/authorized_keys', function(err, stdout, stderr) {
-            console.log('mv ssh_kit_test_key.pub ~/.ssh');
-            console.log('err', err);
-            console.log(stdout);
-            console.log('-', stderr);
-        });
-
-
-        exec('ls -la ~', function(err, stdout, stderr) {
-            console.log('err', err);
-            console.log(stdout);
-            console.log('-', stderr);
-        });
-        exec('ls -la ~/.ssh', function(err, stdout, stderr) {
-            console.log('err', err);
-            console.log(stdout);
-            console.log('-', stderr);
-        });
-
-        exec('hostname', function(err, stdout, stderr) {
-            console.log('err', err);
-            console.log(stdout);
-            console.log('-', stderr);
-        });
     });
 });
