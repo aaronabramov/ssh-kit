@@ -85,12 +85,13 @@ function Task(options) {
 
 Task.prototype.run = function(done) {
     var cmd = 'ssh',
-        userAndHost;
+        userAndHost, key;
     if (this.ctx.get('username')) {
         userAndHost = this.ctx.get('username') + '@' + this.ctx.get('host');
     } else {
         userAndHost = this.ctx.get('host');
     }
+
     args = [
         userAndHost,
         '-o',
@@ -100,6 +101,13 @@ Task.prototype.run = function(done) {
         '-q',
         this.cmd
     ];
+
+    if (key = this.ctx.get('sshKey')) {
+        args.push('-i');
+        args.push(key);
+    }
+
+    args.push(this.cmd);
     console.log(cmd, args);
     console.log(chalk.underline.cyan('executing:'), this.cmd);
     var child = spawn(cmd, args);
