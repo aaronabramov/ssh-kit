@@ -3,8 +3,13 @@ var exec = require('child_process').exec,
     chalk = require('chalk'),
     path = require('path'),
     EventEmitter = require('events').EventEmitter,
+    Immutable = require('immutable'),
     util = require('util'),
-    ATTRIBUTES = 'username host sshKey'.split(/\s+/),
+    ATTRIBUTES = [
+        'username',
+        'host',
+        'sshKey'
+    ],
     DEBUG = true;
 
 
@@ -14,22 +19,20 @@ function debug() {
     }
 };
 
+/*
+ * @constructor
+ */
 function RemoteExec() {
     this.queue = [];
-    this.ctx = {};
+    // Context of task execution. Immutable
+    this.ctx = Immutable.Map({});
 };
 
 util.inherits(RemoteExec, EventEmitter);
 
-// define setters
-ATTRIBUTES.forEach(function(attribute) {
-    RemoteExec.prototype[attribute] = function(val) {
-        return this.ctx[attribute] = val;
-    };
-});
-
-RemoteExec.prototype.remote = function() {
-    return this.ctx.username + '@' + this.ctx.host;
+// define setter
+RemoteExec.prototype.set = function(k, v) {
+    this.ctx = this.ctx.set(k, v);
 };
 
 RemoteExec.prototype.exec = function(cmd, callback) {
@@ -81,9 +84,15 @@ function Task(options) {
 }
 
 Task.prototype.run = function(done) {
-    var cmd = 'ssh';
+    var cmd = 'ssh',
+        userAndHost;
+    if (this.ctx.get('username')) {
+        userAndHost = this.ctx.get('username') + '@' + this.ctx.get('host');
+    } else {
+        userAndHost = this.ctx.get('host');
+    }
     args = [
-        this.ctx.username + '@' + this.ctx.host,
+        userAndHost,
         '-q',
         this.cmd
     ];
