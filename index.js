@@ -10,7 +10,12 @@ var exec = require('child_process').exec,
         'host',
         'sshKey'
     ],
+    ATTRIBUTES_HASH = {},
     DEBUG = true;
+
+ATTRIBUTES.forEach(function(attr) {
+    ATTRIBUTES_HASH[attr] = true;
+});
 
 
 function debug() {
@@ -32,6 +37,9 @@ util.inherits(RemoteExec, EventEmitter);
 
 // define setter
 RemoteExec.prototype.set = function(k, v) {
+    if (!ATTRIBUTES_HASH[k]) {
+        throw new Error('unknown attribute: ' + k);
+    }
     this.ctx = this.ctx.set(k, v);
 };
 
