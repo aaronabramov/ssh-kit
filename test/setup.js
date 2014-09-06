@@ -19,4 +19,10 @@ before(function(done) {
         console.log('stderr: ' + stderr);
         done();
     });
+
+    // shared fn to set ssh key
+    this.setKey = function(ssh) {
+        // relative `~/.ssh` does not work on travis
+        ssh.set('sshKey', '/home/travis/.ssh/ssh_kit_test_key');
+    };
 });
