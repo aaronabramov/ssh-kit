@@ -14,9 +14,9 @@ before(function(done) {
             return console.error(err);
         }
 
-        console.log('executing: ' + cmd);
-        console.log('stdour: ' + stdout);
-        console.log('stderr: ' + stderr);
+        // console.log('executing: ' + cmd);
+        // console.log('stdour: ' + stdout);
+        // console.log('stderr: ' + stderr);
         done();
     });
 

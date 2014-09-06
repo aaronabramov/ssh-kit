@@ -9,6 +9,7 @@ describe('ssh-kit', function() {
 
     it('connects to ssh', function(done) {
         this.ssh.set('host', 'localhost');
+        this.ssh.set('quiet', true);
         this.setKey(this.ssh);
         this.ssh.exec('ls');
         this.ssh.on('finish', done);

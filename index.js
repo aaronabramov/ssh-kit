@@ -8,10 +8,11 @@ var exec = require('child_process').exec,
     ATTRIBUTES = [
         'username',
         'host',
-        'sshKey'
+        'sshKey',
+        'quiet'
     ],
     ATTRIBUTES_HASH = {},
-    DEBUG = true;
+    DEBUG = false;
 
 ATTRIBUTES.forEach(function(attr) {
     ATTRIBUTES_HASH[attr] = true;
@@ -47,6 +48,7 @@ RemoteExec.prototype.exec = function(cmd, callback) {
     this.queue.push(new Task({
         cmd: cmd,
         ctx: this.ctx,
+        // will be invoked with child process as an argument
         callback: callback
     }));
     this.start();
@@ -85,10 +87,16 @@ RemoteExec.prototype.callNext = function() {
 };
 
 
+/**
+ * @param {Object} options
+ * @param {String} options.cmd command to exec
+ * @param {Object} options.ctx context of execution
+ * @param {Function} options.callback fn to execute when process is spawned
+ */
 function Task(options) {
-    this.type = options.type;
     this.cmd = options.cmd;
     this.ctx = options.ctx
+    this.callback = options.callback;
 }
 
 Task.prototype.run = function(done) {
@@ -115,11 +123,16 @@ Task.prototype.run = function(done) {
     }
 
     args.push(this.cmd);
-    console.log(cmd, args);
-    console.log(chalk.underline.cyan('executing:'), this.cmd);
+    // console.log(cmd, args);
     var child = spawn(cmd, args);
-    child.stdout.pipe(process.stdout);
-    child.stderr.pipe(process.stderr);
+    if (!this.ctx.get('quiet')) {
+        console.log(chalk.underline.cyan('executing:'), this.cmd);
+        child.stdout.pipe(process.stdout);
+        child.stderr.pipe(process.stderr);
+    }
+    if (typeof this.callback === 'function') {
+        this.callback(child);
+    }
     child.on('close', function(code) {
         done();
     });
