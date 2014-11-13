@@ -1,6 +1,6 @@
 {
   "name": "ssh-kit",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "javascript SSH kit",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,10 @@
   },
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dmitriiabramov/ssh-kit.git"
+  },
   "dependencies": {
     "chalk": "0.5.1"
   }
