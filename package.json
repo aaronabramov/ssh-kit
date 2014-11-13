@@ -4,7 +4,7 @@
   "description": "javascript SSH kit",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "author": "",
   "license": "MIT",
@@ -13,6 +13,10 @@
     "url": "git@github.com:dmitriiabramov/ssh-kit.git"
   },
   "dependencies": {
-    "chalk": "0.5.1"
+    "chalk": "0.5.1",
+    "immutable": "^2.0.16"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4"
   }
 }

@@ -1,4 +1,6 @@
 # ssh-kit
+[![Build Status](https://travis-ci.org/dmitriiabramov/ssh-kit.svg?branch=master)](https://travis-ci.org/dmitriiabramov/ssh-kit)
+
 minimalist, efficient ssh client for javascript
 
 ```javascript
@@ -34,4 +36,8 @@ ssh.with({dir: '~/test', env: {ENV: 'test'}, servers: ['s1', 's2'], function() {
 // utils
 
 ssh.mkdirIfNotExists('~/test1'); // etc...
+
+
+// Testing
+create temporary `authorized_keys` file and restore original in after hook
 ```

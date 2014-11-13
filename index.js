@@ -3,9 +3,20 @@ var exec = require('child_process').exec,
     chalk = require('chalk'),
     path = require('path'),
     EventEmitter = require('events').EventEmitter,
+    Immutable = require('immutable'),
     util = require('util'),
-    ATTRIBUTES = 'username host sshKey'.split(/\s+/),
-    DEBUG = true;
+    ATTRIBUTES = [
+        'username',
+        'host',
+        'sshKey',
+        'quiet'
+    ],
+    ATTRIBUTES_HASH = {},
+    DEBUG = false;
+
+ATTRIBUTES.forEach(function(attr) {
+    ATTRIBUTES_HASH[attr] = true;
+});
 
 
 function debug() {
@@ -14,28 +25,30 @@ function debug() {
     }
 };
 
+/*
+ * @constructor
+ */
 function RemoteExec() {
     this.queue = [];
-    this.ctx = {};
+    // Context of task execution. Immutable
+    this.ctx = Immutable.Map({});
 };
 
 util.inherits(RemoteExec, EventEmitter);
 
-// define setters
-ATTRIBUTES.forEach(function(attribute) {
-    RemoteExec.prototype[attribute] = function(val) {
-        return this.ctx[attribute] = val;
-    };
-});
-
-RemoteExec.prototype.remote = function() {
-    return this.ctx.username + '@' + this.ctx.host;
+// define setter
+RemoteExec.prototype.set = function(k, v) {
+    if (!ATTRIBUTES_HASH[k]) {
+        throw new Error('unknown attribute: ' + k);
+    }
+    this.ctx = this.ctx.set(k, v);
 };
 
 RemoteExec.prototype.exec = function(cmd, callback) {
     this.queue.push(new Task({
         cmd: cmd,
         ctx: this.ctx,
+        // will be invoked with child process as an argument
         callback: callback
     }));
     this.start();
@@ -74,24 +87,52 @@ RemoteExec.prototype.callNext = function() {
 };
 
 
+/**
+ * @param {Object} options
+ * @param {String} options.cmd command to exec
+ * @param {Object} options.ctx context of execution
+ * @param {Function} options.callback fn to execute when process is spawned
+ */
 function Task(options) {
-    this.type = options.type;
     this.cmd = options.cmd;
     this.ctx = options.ctx
+    this.callback = options.callback;
 }
 
 Task.prototype.run = function(done) {
-    var cmd = 'ssh';
+    var cmd = 'ssh',
+        userAndHost, key;
+    if (this.ctx.get('username')) {
+        userAndHost = this.ctx.get('username') + '@' + this.ctx.get('host');
+    } else {
+        userAndHost = this.ctx.get('host');
+    }
+
     args = [
-        this.ctx.username + '@' + this.ctx.host,
+        userAndHost,
+        '-o',
+        'UserKnownHostsFile=/dev/null',
+        '-o',
+        'StrictHostKeyChecking=no',
         '-q',
-        this.cmd
     ];
-    console.log(cmd, args);
-    console.log(chalk.underline.cyan('executing:'), this.cmd);
+
+    if (key = this.ctx.get('sshKey')) {
+        args.push('-i');
+        args.push(key);
+    }
+
+    args.push(this.cmd);
+    // console.log(cmd, args);
     var child = spawn(cmd, args);
-    child.stdout.pipe(process.stdout);
-    child.stderr.pipe(process.stderr);
+    if (!this.ctx.get('quiet')) {
+        console.log(chalk.underline.cyan('executing:'), this.cmd);
+        child.stdout.pipe(process.stdout);
+        child.stderr.pipe(process.stderr);
+    }
+    if (typeof this.callback === 'function') {
+        this.callback(child);
+    }
     child.on('close', function(code) {
         done();
     });
