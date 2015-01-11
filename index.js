@@ -79,7 +79,9 @@ RemoteExec.prototype.callNext = function() {
         }
         task.run(function(err) {
             if (err) {
-                throw err;
+                process.stderr.write(chalk.red(err) + '\n');
+
+                process.exit(1);
             }
             _this.callNext();
         });
@@ -113,8 +115,8 @@ Task.prototype.run = function(done) {
         '-o',
         'UserKnownHostsFile=/dev/null',
         '-o',
-        'StrictHostKeyChecking=no',
-        '-q',
+        'StrictHostKeyChecking=no'
+        // '-q',
     ];
 
     if (key = this.ctx.get('sshKey')) {
@@ -134,7 +136,11 @@ Task.prototype.run = function(done) {
         this.callback(child);
     }
     child.on('close', function(code) {
-        done();
+        if (code != 0) {
+            done('error. exit code: ' + code);
+        } else {
+            done();
+        }
     });
 };
 
