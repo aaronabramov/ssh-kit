@@ -7,9 +7,9 @@ minimalist, efficient ssh client for javascript
 var SSH = require('ssh-kit'),
     ssh = new SSH();
 
-ssh.username('dmitriiabramov');
-ssh.host('rheia.us');
-ssh.sshKey('~/.ssh/id_rsa');
+ssh.set('username', 'dmitriiabramov');
+ssh.set('host', 'rheia.us');
+ssh.set('sshKey', '~/.ssh/id_rsa');
 
 ssh.exec('pwd');
 ssh.exec('ls -la');
