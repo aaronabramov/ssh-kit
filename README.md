@@ -21,6 +21,12 @@ ssh.on('finish', console.log.bind(console, 'all done!'));
 ```javascript
 // TODO:
 
+// local command execution
+// ssh.local('npm prune --production');
+
+// remote copy
+// ssh.scp('./app.tar.gz', '~/app.tar.gz');
+
 // multiple servers in parallel
 ssh.addServer('s1');
 ssh.addServer('s2');
