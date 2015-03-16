@@ -4,7 +4,8 @@ var chalk = require('chalk'),
     util = require('util'),
     debug = require('./debug'),
     config = require('./config'),
-    Task = require('./task');
+    LocalTask = require('./local_task'),
+    RemoteTask = require('./remote_task');
 
 /*
  * @constructor
@@ -25,14 +26,25 @@ Exec.prototype.set = function(k, v) {
     this.ctx = this.ctx.set(k, v);
 };
 
+// TODO: DRY
 Exec.prototype.exec = function(cmd, callback) {
-    this.queue.push(new Task({
+    this.queue.push(new RemoteTask({
         cmd: cmd,
         ctx: this.ctx,
         // will be invoked with child process as an argument
         callback: callback
     }));
     this.start();
+};
+
+// TODO: DRY
+Exec.prototype.local_exec = function(cmd, callback) {
+    this.queue.push(new LocalTask({
+        cmd: cmd,
+        ctx: this.ctx,
+        // will be invoked with child process as an argument
+        callback: callback
+    }));
 };
 
 Exec.prototype.start = function() {
