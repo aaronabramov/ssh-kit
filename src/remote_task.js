@@ -7,13 +7,13 @@ var spawn = require('child_process').spawn,
  * @param {Object} options.ctx context of execution
  * @param {Function} options.callback fn to execute when process is spawned
  */
-function Task(options) {
+function RemoteTask(options) {
     this.cmd = options.cmd;
     this.ctx = options.ctx;
     this.callback = options.callback;
 }
 
-Task.prototype.run = function(done) {
+RemoteTask.prototype.run = function(done) {
     var cmd = 'ssh',
         key = this.ctx.get('sshKey'),
         userAndHost;
@@ -57,4 +57,4 @@ Task.prototype.run = function(done) {
     });
 };
 
-module.exports = Task;
+module.exports = RemoteTask;
