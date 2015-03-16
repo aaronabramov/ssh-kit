@@ -1,1 +1,1 @@
-module.exports = require('./src/remote_exec');
+module.exports = require('./src/exec');

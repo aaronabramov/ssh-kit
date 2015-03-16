@@ -9,23 +9,23 @@ var chalk = require('chalk'),
 /*
  * @constructor
  */
-function RemoteExec() {
+function Exec() {
     this.queue = [];
     // Context of task execution. Immutable
     this.ctx = Immutable.Map({});
 }
 
-util.inherits(RemoteExec, EventEmitter);
+util.inherits(Exec, EventEmitter);
 
 // define setter
-RemoteExec.prototype.set = function(k, v) {
+Exec.prototype.set = function(k, v) {
     if (!config.ATTRIBUTES_HASH[k]) {
         throw new Error('unknown attribute: ' + k);
     }
     this.ctx = this.ctx.set(k, v);
 };
 
-RemoteExec.prototype.exec = function(cmd, callback) {
+Exec.prototype.exec = function(cmd, callback) {
     this.queue.push(new Task({
         cmd: cmd,
         ctx: this.ctx,
@@ -35,7 +35,7 @@ RemoteExec.prototype.exec = function(cmd, callback) {
     this.start();
 };
 
-RemoteExec.prototype.start = function() {
+Exec.prototype.start = function() {
     if (!this.isRunning) {
         this.emit('start');
         debug('start');
@@ -44,13 +44,13 @@ RemoteExec.prototype.start = function() {
     }
 };
 
-RemoteExec.prototype.stop = function() {
+Exec.prototype.stop = function() {
     debug('stop');
     this.isRunning = false;
     this.emit('finish');
 };
 
-RemoteExec.prototype.callNext = function() {
+Exec.prototype.callNext = function() {
     var _this = this;
 
     setTimeout(function() {
@@ -69,4 +69,4 @@ RemoteExec.prototype.callNext = function() {
     }, 5);
 };
 
-module.exports = RemoteExec;
+module.exports = Exec;
